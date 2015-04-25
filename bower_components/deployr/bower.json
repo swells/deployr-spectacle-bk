@@ -1,0 +1,7 @@
+{
+  "name": "deployr",
+  "version": "7.4.1",
+  "main": "./deployr.min.js",
+  "ignore": [],
+  "dependencies": {}
+}
