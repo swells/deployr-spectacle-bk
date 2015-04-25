@@ -1,0 +1,104 @@
+<div ng-controller="ContentCtrl">
+    <div layout="row" style="margin: 25px; padding:25px">
+        <div flex>
+            <div ng-include="'app/components/content/view.html'"></div>
+            <!--<div ng-include="'app/components/content/dt.html'"></div>-->
+        </div>
+        <!--
+        <div flex>
+            <div layout="column" class="doc-content">
+                <section>
+                    <md-whiteframe class="md-whiteframe-z1" layout layout-align="center center">
+                        <md-content class="md-padding">
+                            <md-tabs>
+                                <md-tab label="HTML">
+                                    <md-content class="md-padding">
+                                        <h1 class="md-display-2">UI</h1>
+                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis ante augue. Phasellus volutpat neque ac dui mattis vulputate. Etiam consequat aliquam cursus. In sodales pretium ultrices. Maecenas lectus est, sollicitudin consectetur felis nec, feugiat ultricies mi.</p>
+                                    </md-content>
+                                </md-tab>
+                                <md-tab label="R">
+                                    <md-content class="md-padding">
+                                        <h1 class="md-display-2">R</h1>
+                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis ante augue. Phasellus volutpat neque ac dui mattis vulputate. Etiam consequat aliquam cursus. In sodales pretium ultrices. Maecenas lectus est, sollicitudin consectetur felis nec, feugiat ultricies mi.</p>
+                                    </md-content>
+                                </md-tab>
+                            </md-tabs>
+                        </md-content>
+                    </md-whiteframe>
+                </section>
+            </div>
+            -->
+            <!-- spectacle-->
+
+
+    <!--<h1>R <small>♥</small> JavaScript just don't make me write it! </h1>-->
+        <!--  <div layout="column"> ..... <di-column-layout>
+    <!-- <div layout="row" layout-wrap> ..... <di-row-layout wrap>  -->
+
+            <!-- ====================================================== -->
+            <!--
+        <br>INPUT a:: {{ rscript.myScript.inputs.a }}
+        <br>INPUT b:: {{ rscript.myScript.inputs.b }}
+        <br>INPUT c:: {{ rscript.myScript.inputs.c }}
+        <br>INPUT d:: {{ rscript.myScript.inputs.d }}
+        <br>INPUT e:: {{ rscript.myScript.inputs.e }}
+        <br>
+        <p>Output x :{{ rscript.myScript.outputs.x }}</p>
+        <p>Output y :{{ rscript.myScript.outputs.y }}</p>
+        <p>Output z :{{ rscript.myScript.outputs.z }}</p>-->
+            <!-- ====================================================== -->
+            <!--
+    <di-server endpoint="http://localhost:7400" cors="true" />
+    <di-rscript name="myScript.R" inputs="a,b" outputs="x,y,z" onload="true" />
+    <di-rscript name="reduce.R" inputs="i,k,k" outputs="shift" />
+
+    <di-rcode name="rnorm" inputs="a" outputs="x">        
+        x<-rnorm(a) 
+    </di-rcode>
+    
+    INPUT:: {{ rscript.myScript.inputs.a }}
+    <br> OUTPUT:: {{ rcode.rnorm.outputs }}
+    
+    <di-input rscript="rscript.myScript" rinput="a" rclass="numeric" label="input a" />
+    
+    
+    <div layout="row">
+        <div flex>
+            <md-input-container flex>
+                <label>First Name</label>
+                <input ng-model="rinput.script.R">
+                </
+            <md-select placeholder="Pick" ng-model="rinput.script.someVal">
+                <md-option value="1">One</md-option>
+                <md-option value="2">Two</md-option>
+            </md-select>
+        </div>
+    </div>
+    <div layout="row">
+        <div flex>
+            <div>First:: {{ rinput.script.first }}</div>
+            <div>Val:: {{ rinput.script.someVal }} </div>
+        </div>
+    </div>
+
+    <di-server endpoint="http://localhost:7400" cors="true" />
+    
+    <di-rscript name="myScript.R" inputs="a,b,c" outputs="x,y,z" onload="true" />
+
+    <di-input rscript="myScript" rinput="a" rclass="numeric" />
+
+
+    <di-select placeholder="Pick" rscript="myScript" rinput="b" rclass="numeric">
+        <option value="1">One</option>
+        <option value="2">Two</option>
+    </di-select>
+
+    {{ rscripts.myScript.input.a }}
+    {{ rscmyScript.input.b }}    
+
+    {{ myScript.output.x }}
+    -->
+        </div>
+    </div>
+</div>

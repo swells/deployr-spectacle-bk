@@ -1,0 +1,47 @@
+<div di-server endpoint="http://deployr-7.4.x-trunk.deployr.co:7400" cors="true">
+      
+        <di-rscript 
+          name="myScript.R" 
+          author="swells" 
+          directory="root" 
+          inputs="n_breaks,individual_obs,density,bw_adjust" 
+          outputs="plot" 
+          onload="true">
+        </di-rscript>
+                
+        <di-select 
+          placeholder="20" 
+          rscript="myScript" 
+          rinput="n_breaks" 
+          rtype="numeric" 
+          label="Number of bins in histogram (approximate):" 
+          watch="true" 
+          selected="50">
+            <di-option value="10">10</di-option>
+            <di-option value="20">20</di-option>
+            <di-option value="35">35</di-option>
+            <di-option value="50">50</di-option>
+        </di-select>
+        
+        <di-checkbox rscript="myScript" rinput="individual_obs" rtype="logical" watch="true">
+            Show individual observations
+        </di-checkbox>
+        <di-checkbox rscript="myScript" rinput="density" rtype="logical" watch="true">
+            Show density estimate
+        </di-checkbox>
+        
+        <di-plot rscript="myScript" routput="plot" lllheight="300px"></di-plot>
+
+        <di-slider 
+          ng-show="rscript.myScript.inputs.density" 
+          rscript="myScript" 
+          rinput="bw_adjust" 
+          rtype="numeric" 
+          watch="true" 
+          min="0.2" 
+          max="2" 
+          value="1"
+          step="0.2">
+        </di-slider>
+
+</div>
