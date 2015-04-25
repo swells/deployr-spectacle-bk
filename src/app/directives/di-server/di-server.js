@@ -1,7 +1,7 @@
 'use strict';
 
-var app = angular.module('deployrUi.directives', ['deployrUi.core']);
-    
+var app = angular.module('deployrUi.directives', ['deployrUi']);
+
 function diServerDirective($deployr) {
     return {
         restrict: 'EA',
@@ -133,7 +133,7 @@ function diSliderDirective($deployr, $compile, $rootScope, $timeout) {
                         $timeout.cancel(debounce);
                         debounce = $timeout(function() {
                             $deployr.exe($rootScope.rscript[rscript]);
-                        }, attrs.debounce || 1000);
+                        }, attrs.debounce || 500);
                     }
                 }, true);
             }
@@ -151,11 +151,12 @@ function diCheckboxDirective($deployr, $compile, $rootScope) {
             rinput: '@',
             rscript: '@'
         },
+
         link: function(scope, element, attrs) {
             var rscript = attrs.rscript,
                 rinput = attrs.rinput,
                 value = attrs.value === 'true' ? true : false,
-                linkFn;
+                el = angular.element(element);
 
             if (attrs.watch === 'true') {
                 $rootScope.rscript[rscript].watches.push(rinput);
@@ -164,10 +165,12 @@ function diCheckboxDirective($deployr, $compile, $rootScope) {
             $rootScope.rscript[rscript].inputs[rinput] = value;
             $rootScope.rscript[rscript].rtypes[rinput] = attrs.rtype;
 
-            linkFn = $compile('<md-checkbox ng-model="rscript.' + rscript + '.inputs.' + rinput + '">' +
-                element.html() +
-                '</md-checkbox>');
-            element.html(linkFn($rootScope));
+            var html = '<md-checkbox ng-model="rscript.' + rscript + '.inputs.' + rinput + '">' +
+                          element.html() +
+                       '</md-checkbox>';
+
+            el.empty();
+            el.append($compile(html)($rootScope));
         }
     };
 }
@@ -191,7 +194,7 @@ function diSelectDirective($deployr, $compile, $rootScope) {
                 selected = attrs.selected,
                 placeholder = attrs.placeholder || '',
                 label = attrs.label ? '<p style="margin-bottom:5px;">' + attrs.label + '</p>' : '',
-                linkFn;
+                el = angular.element(element);
 
             if (selected) {
                 switch (attrs.rtype) {
@@ -220,12 +223,13 @@ function diSelectDirective($deployr, $compile, $rootScope) {
             $rootScope.rscript[rscript].inputs[rinput] = selected;
             $rootScope.rscript[rscript].rtypes[rinput] = attrs.rtype;
 
-            linkFn = $compile(label + '<md-select' + (attrs.label ? ' style="margin-top:0px;"' : '') + ' placeholder="' + placeholder + '" ' +
+            var html = label + '<md-select' + (attrs.label ? ' style="margin-top:0px;"' : '') + ' placeholder="' + placeholder + '" ' +
                 'ng-model="rscript.' + rscript + '.inputs.' + rinput + '">' +
                 element.html().replace(/di-/gi, 'md-') +
-                '</md-select>');
-
-            element.html(linkFn($rootScope));
+                '</md-select>';            
+            
+            el.empty();
+            el.append($compile(html)($rootScope));
         }
     };
 }
@@ -245,9 +249,13 @@ function diPlotDirective($deployr, $compile, $rootScope) {
                 routput = attrs.routput,
                 height = attrs.height,
                 width = attrs.width,
-                linkFn = $compile('<img ng-src="{{rscript.' + rscript + '.outputs.' + routput + '}}" height="' + height + '"/>');
+                el = angular.element(element),
+                html = '<img ng-src="{{rscript.' + rscript + '.outputs.' + routput + '}}" height="' + height + '"/>';
 
-            element.html(linkFn($rootScope));
+            //linkFn = $compile('<img ng-src="{{rscript.' + rscript + '.outputs.' + routput + '}}" height="' + height + '"/>');
+            //element.html(linkFn($rootScope));
+            el.empty();
+            el.append($compile(html)($rootScope));
         }
     };
 }
