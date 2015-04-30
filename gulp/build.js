@@ -53,9 +53,9 @@ module.exports = function(options) {
       .pipe($.revReplace())
       .pipe(htmlFilter)
       .pipe($.minifyHtml({
-        empty: true,
-        spare: true,
-        quotes: true,
+        empty: false, //true,
+        spare: false, //true,
+        quotes: false, //true,
         conditionals: true
       }))
       .pipe(htmlFilter.restore())

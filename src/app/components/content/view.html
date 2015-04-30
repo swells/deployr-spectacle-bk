@@ -1,11 +1,12 @@
-<div di-server endpoint="http://deployr-7.4.x-trunk.deployr.co:7400" cors="true">
-      
+<div di-server endpoint="http://deployr-7.4.x-trunk.deployr.co:7400" cors="true" auth="true">
+
         <di-rscript 
           name="myScript.R" 
           author="swells" 
           directory="root" 
           inputs="n_breaks,individual_obs,density,bw_adjust" 
-          outputs="plot" 
+          outputs="plot"
+          es="df" 
           onload="true">
         </di-rscript>
                 
@@ -29,8 +30,8 @@
         <di-checkbox rscript="myScript" rinput="density" rtype="logical" watch="true">
             Show density estimate
         </di-checkbox>
-        
-        <di-plot rscript="myScript" routput="plot" lllheight="300px"></di-plot>
+
+        <di-plot rscript="myScript" routput="plot"></di-plot>
 
         <di-slider 
           ng-show="rscript.myScript.inputs.density" 
@@ -43,5 +44,28 @@
           value="1"
           step="0.2">
         </di-slider>
+
+        <di-toast rscript="myScript" es="df" hideDelay="1000"></di-toast>              
+        <button ng-click="logout()">Logout</button>
+        <!--
+        <di-rcode name="myBC.R" inputs="x" outputs="label,y" onload="true">
+          label<-"Hello from the R code!"         
+          y<-x * 10 
+        </di-rcode>    
+
+        <h1>{{ rcode.myBC.outputs.label }}</h1> 
+        <h1>{{ rcode.myBC.outputs.y }}</h1>
+
+        <di-slider           
+          rcode="myBC" 
+          rinput="x" 
+          rtype="integer"           
+          min="0" 
+          max="20" 
+          value="5"
+          step="5"
+          watch="true">
+        </di-slider>
+        -->
 
 </div>

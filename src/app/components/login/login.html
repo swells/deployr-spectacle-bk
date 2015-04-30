@@ -1,0 +1,31 @@
+<md-content ng-controller="LoginCtrl" class="login">
+    <hgroup>
+        <h1>Sign into App</h1>
+        <h3>DeployR</h3>
+    </hgroup>
+    <form name="loginForm" autocomplete="off">
+        <div ng-show="error" class="message-error">
+            The username or password you entered is incorrect.
+        </div>
+        <div>
+            <md-input-container flex>
+                <label>Username</label>
+                <input ng-model="user.username" type="text" name="un">
+            </md-input-container>
+        </div>
+        <input style="display:none" type="text" name="fakeusernameremembered" />
+        <input style="display:none" type="password" name="fakepasswordremembered" />
+        <div class="group">
+            <md-input-container flex>
+                <label>Password</label>
+                <input ng-model="user.password" type="password" name="pw">
+            </md-input-container>
+        </div>
+        <button ng-disabled="progress" type="submit" class="button buttonBlue" ng-click="login()">
+            Sign in
+            <div class="ripples buttonRipples">
+                <span class="ripplesCircle"></span>
+            </div>
+        </button>
+    </form>
+</md-content>

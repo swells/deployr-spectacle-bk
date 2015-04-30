@@ -10,7 +10,7 @@ function diServerDirective($deployr) {
             cors: '@'
         },
         link: function($scope, element, attrs) {
-            $deployr.configure(attrs.endpoint, attrs.cors)
+            $deployr.configure(attrs.endpoint, attrs.cors, attrs.auth)
         }
     };
 }
@@ -24,6 +24,7 @@ function diRScriptDirective($deployr) {
             directory: '@',
             inputs: '@',
             outputs: '@',
+            es: '@',
             onload: '@'
         },
         compile: function() {
@@ -35,6 +36,7 @@ function diRScriptDirective($deployr) {
                         directory: attrs.directory,
                         inputs: attrs.inputs,
                         outputs: attrs.outputs,
+                        es: attrs.es,
                         onload: attrs.onload
                     });
                 }
@@ -48,14 +50,37 @@ function diRCodeDirective($deployr) {
         restrict: 'E',
         scope: {
             name: '@',
+            author: '@',
+            directory: '@',
             inputs: '@',
             outputs: '@',
+            es: '@',
             onload: '@'
         },
-        link: function($scope, element, attrs) {
-            var block = element.html();
-            element.html('');
-            $deployr.registarCode(attrs.name, block, attrs.inputs, attrs.outputs, attrs.onload);
+        compile: function() {
+            return {
+                pre: function(scope, element, attrs) {
+                    var block = element.html();
+
+                    var htmlEncode = function(html) {
+                        return html.replace(/&amp;/g, '&')
+                            .replace(/&quot;/g, '"')
+                            .replace(/&#39;/g, '\'')
+                            .replace(/&lt;/g, '<')
+                            .replace(/&gt/g, '>;');
+                    };
+
+                    element.empty();
+                    $deployr.registarCode({
+                        name: attrs.name,
+                        inputs: attrs.inputs,
+                        outputs: attrs.outputs,
+                        es: attrs.es,
+                        onload: attrs.onload,
+                        block: htmlEncode(block)
+                    });
+                }
+            }
         }
     };
 }
@@ -104,35 +129,34 @@ function diSliderDirective($deployr, $compile, $rootScope, $timeout) {
             rscript: '@'
         },
         link: function(scope, element, attrs) {
-            var rscript = attrs.rscript,
+            var rctx = attrs.rscript || attrs.rcode,
                 rinput = attrs.rinput,
                 min = attrs.min || 0,
                 max = attrs.max || 100,
                 value = attrs.value || 0,
                 step = attrs.step || 1,
                 debounce,
-                linkFn;
+                linkFn,
+                ctx = attrs.rscript ? 'rscript' : 'rcode';
 
-            if (attrs.watch === 'true') {
-                //$rootScope.rscript[rscript].watches.push(rinput);
-            }
-
-            $rootScope.rscript[rscript].inputs[rinput] = value;
-            $rootScope.rscript[rscript].rtypes[rinput] = attrs.rtype;
+            $rootScope[ctx][rctx].inputs[rinput] = value;
+            $rootScope[ctx][rctx].rtypes[rinput] = attrs.rtype;
 
             linkFn = $compile('<md-slider flex min="' + min + '" max="' + max + '"' +
-                'ng-model="rscript.' + rscript + '.inputs.' + rinput + '"' +
+                'ng-model="' + ctx + '.' + rctx + '.inputs.' + rinput + '"' +
                 'id="red-slider" aria-label="red" md-discrete class step="' + step + '">' +
                 '</md-slider>');
 
             element.append(linkFn($rootScope));
 
             if (attrs.watch === 'true') {
-                $rootScope.$watch('rscript.' + rscript + '.inputs.' + rinput, function(n, o) {
+                //$rootScope.$watch('rscript.' + rctx + '.inputs.' + rinput, function(n, o) {
+
+                $rootScope.$watch(ctx + '.' + rctx + '.inputs.' + rinput, function(n, o) {
                     if (n !== o) {
                         $timeout.cancel(debounce);
                         debounce = $timeout(function() {
-                            $deployr.exe($rootScope.rscript[rscript]);
+                            $deployr.exe($rootScope[ctx][rctx]);
                         }, attrs.debounce || 500);
                     }
                 }, true);
@@ -166,8 +190,8 @@ function diCheckboxDirective($deployr, $compile, $rootScope) {
             $rootScope.rscript[rscript].rtypes[rinput] = attrs.rtype;
 
             var html = '<md-checkbox ng-model="rscript.' + rscript + '.inputs.' + rinput + '">' +
-                          element.html() +
-                       '</md-checkbox>';
+                element.html() +
+                '</md-checkbox>';
 
             el.empty();
             el.append($compile(html)($rootScope));
@@ -175,7 +199,6 @@ function diCheckboxDirective($deployr, $compile, $rootScope) {
     };
 }
 
-// <di-select placeholder="Pick" rscript="myScript" rinput="a" rtype="numeric">
 function diSelectDirective($deployr, $compile, $rootScope) {
     return {
         restrict: 'E',
@@ -226,8 +249,8 @@ function diSelectDirective($deployr, $compile, $rootScope) {
             var html = label + '<md-select' + (attrs.label ? ' style="margin-top:0px;"' : '') + ' placeholder="' + placeholder + '" ' +
                 'ng-model="rscript.' + rscript + '.inputs.' + rinput + '">' +
                 element.html().replace(/di-/gi, 'md-') +
-                '</md-select>';            
-            
+                '</md-select>';
+
             el.empty();
             el.append($compile(html)($rootScope));
         }
@@ -252,10 +275,46 @@ function diPlotDirective($deployr, $compile, $rootScope) {
                 el = angular.element(element),
                 html = '<img ng-src="{{rscript.' + rscript + '.outputs.' + routput + '}}" height="' + height + '"/>';
 
-            //linkFn = $compile('<img ng-src="{{rscript.' + rscript + '.outputs.' + routput + '}}" height="' + height + '"/>');
-            //element.html(linkFn($rootScope));
             el.empty();
             el.append($compile(html)($rootScope));
+        }
+    };
+}
+
+
+// $mdToast.show($mdToast.simple().content('Hello!'));
+function diToastDirective($deployr, $compile, $rootScope, $mdToast) {
+    return {
+        restrict: 'E',
+        scope: {
+            es: '@',
+            routput: '@',
+            rscript: '@',
+            hideDelay: '@'
+        },
+        link: function(scope, element, attrs) {
+            var rctx = attrs.rscript || attrs.rcode,
+                ctx = attrs.rscript ? 'rscript' : 'rcode';
+
+            if (attrs.es) {
+                $rootScope.$watch(ctx + '.' + rctx + '.es.' + attrs.es, function(n, o) {
+                    if (n !== o) {
+                        $mdToast.show($mdToast.simple().content(n));
+                    }
+                }, true);
+            }
+            if (attrs.routput) {
+                $rootScope.$watch(ctx + '.' + rctx + '.es.' + attrs.routput, function(n, o) {
+                    if (n !== o) {
+                        //$mdToast.show($mdToast.simple().content(n).hideDelay(0))//attrs.hideDelay || 3000));
+                        $mdToast.show(
+                           $mdToast.simple()
+                             .content(n)
+                             .hideDelay(attrs.hideDelay || 3000)
+                        );
+                    }
+                }, true);
+            }            
         }
     };
 }
@@ -328,6 +387,6 @@ app.directive('diServer', diServerDirective)
     .directive('diCheckbox', diCheckboxDirective)
     .directive('diSelect', diSelectDirective)
     .directive('diPlot', diPlotDirective)
-    //.directive('diContent', diContentDirective)
+    .directive('diToast', diToastDirective)
     .directive('diTable', diTableDirective)
     .directive('diColresize', diColresizeDirective);

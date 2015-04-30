@@ -4,7 +4,8 @@
   "dependencies": {},
   "scripts": {
     "test": "gulp test",
-    "serve": "gulp serve"
+    "serve": "gulp serve",
+    "build": "gulp build"
   },
   "devDependencies": {
     "gulp": "~3.8.10",

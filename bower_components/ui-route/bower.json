@@ -1,0 +1,7 @@
+{
+  "name": "ui-route",
+  "version": "0.2.14",
+  "main": "./ui-route.min.js",
+  "ignore": [],
+  "dependencies": {}
+}

@@ -1,0 +1,24 @@
+<div di-server endpoint="http://23.253.163.150:7400" cors="true" auth="true">	
+
+    <di-rcode name="myBC.R" inputs="x" outputs="label,y" onload="true">
+        label<- "Hello from the R code!"
+        revoEvent(x)
+        y<-rnorm(x) 
+
+    </di-rcode>    
+
+	<h1>{{ rcode.myBC.outputs.label }}</h1> 
+	<h1>{{ rcode.myBC.outputs.y }}</h1>
+
+    <di-slider           
+          rcode="myBC" 
+          rinput="x" 
+          rtype="numeric" 
+          watch="true" 
+          max="2" 
+          value="1"
+          step="0.2"
+          min="0.2" >
+    </di-slider>
+
+</div>
